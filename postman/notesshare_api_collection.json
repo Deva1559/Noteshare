@@ -1,0 +1,291 @@
+{
+  "info": {
+    "name": "NotesShare REST API Collection",
+    "description": "Comprehensive Postman collection for NotesShare Student Notes Sharing Repository",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080/api",
+      "type": "string"
+    },
+    {
+      "key": "authToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "adminToken",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Authentication",
+      "item": [
+        {
+          "name": "Register Student",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/auth/register" },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Vikram Adithya\",\n  \"email\": \"vikram@notesshare.com\",\n  \"password\": \"Password@123\",\n  \"department\": \"Computer Science\",\n  \"year\": 3\n}"
+            }
+          }
+        },
+        {
+          "name": "Login (Student)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.data && jsonData.data.token) {",
+                  "    pm.collectionVariables.set('authToken', jsonData.data.token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/auth/login" },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"rahul@notesshare.com\",\n  \"password\": \"Password@123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.data && jsonData.data.token) {",
+                  "    pm.collectionVariables.set('adminToken', jsonData.data.token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/auth/login" },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@notesshare.com\",\n  \"password\": \"Password@123\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Student Profile",
+      "item": [
+        {
+          "name": "Get Current Profile",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }],
+            "url": { "raw": "{{baseUrl}}/students/me" }
+          }
+        },
+        {
+          "name": "Update Profile",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{authToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{baseUrl}}/students/me" },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Rahul Sharma (Updated)\",\n  \"department\": \"Computer Science & Engg\",\n  \"year\": 4\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Student Dashboard Metrics",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }],
+            "url": { "raw": "{{baseUrl}}/students/dashboard" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Subjects",
+      "item": [
+        {
+          "name": "Get All Subjects (Public)",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/subjects" }
+          }
+        },
+        {
+          "name": "Get Subject by ID",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/subjects/1" }
+          }
+        },
+        {
+          "name": "Create Subject (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{baseUrl}}/subjects" },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Machine Learning & Artificial Intelligence\",\n  \"code\": \"CS601\",\n  \"description\": \"Supervised, unsupervised algorithms, deep learning models, neural networks and reinforcement learning.\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Notes",
+      "item": [
+        {
+          "name": "Get All Notes (Filter & Paginate)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/notes?page=0&size=9&sort=createdAt,desc"
+            }
+          }
+        },
+        {
+          "name": "Search Notes",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/notes/search?keyword=Database"
+            }
+          }
+        },
+        {
+          "name": "Get Top-Rated Notes",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/notes/top-rated" }
+          }
+        },
+        {
+          "name": "Get Note Details",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/notes/1" }
+          }
+        },
+        {
+          "name": "Upload Note (Multipart)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }],
+            "url": { "raw": "{{baseUrl}}/notes" },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "title", "value": "Unit 1 - ER Modeling and Relational Algebra", "type": "text" },
+                { "key": "description", "value": "Complete study guide for ER diagrams, entities, relations and normalization.", "type": "text" },
+                { "key": "unit", "value": "1", "type": "text" },
+                { "key": "subjectId", "value": "1", "type": "text" },
+                { "key": "file", "type": "file", "src": "" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Download Note Document",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/notes/1/download" }
+          }
+        },
+        {
+          "name": "Delete Note",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }],
+            "url": { "raw": "{{baseUrl}}/notes/1" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Ratings",
+      "item": [
+        {
+          "name": "Rate Note (1-5)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{authToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{baseUrl}}/notes/1/ratings" },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rating\": 5\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Note Ratings",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/notes/1/ratings" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Admin Operations",
+      "item": [
+        {
+          "name": "Get Admin Dashboard Metrics",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": { "raw": "{{baseUrl}}/admin/dashboard" }
+          }
+        },
+        {
+          "name": "Get All Students",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": { "raw": "{{baseUrl}}/admin/students?page=0&size=15" }
+          }
+        },
+        {
+          "name": "Delete Note as Admin",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": { "raw": "{{baseUrl}}/admin/notes/1" }
+          }
+        }
+      ]
+    }
+  ]
+}
