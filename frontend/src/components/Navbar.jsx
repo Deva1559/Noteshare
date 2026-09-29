@@ -3,15 +3,16 @@ import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import {
   BookOpen,
-  Upload,
+  PlusCircle,
   User,
   LogOut,
   LogIn,
   UserPlus,
-  ShieldAlert,
+  ShieldCheck,
   Compass,
   LayoutDashboard,
   Layers,
+  Sparkles,
 } from 'lucide-react';
 
 const Navbar = () => {
@@ -23,33 +24,39 @@ const Navbar = () => {
     navigate('/login');
   };
 
+  const getInitial = (name) => {
+    if (!name) return 'U';
+    return name.charAt(0).toUpperCase();
+  };
+
   return (
     <header className="navbar">
       <div className="navbar-inner">
         <Link to="/" className="brand">
           <div className="brand-icon">
-            <BookOpen size={22} />
+            <BookOpen size={20} />
           </div>
-          <span>NotesShare</span>
+          <span style={{ letterSpacing: '-0.02em' }}>NotesShare</span>
+          <span className="brand-badge">PROD</span>
         </Link>
 
         <nav>
           <ul className="nav-links">
             <li>
               <NavLink to="/dashboard" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
-                <LayoutDashboard size={17} />
+                <LayoutDashboard size={16} />
                 <span>Dashboard</span>
               </NavLink>
             </li>
             <li>
               <NavLink to="/notes" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
-                <Compass size={17} />
+                <Compass size={16} />
                 <span>Explore Notes</span>
               </NavLink>
             </li>
             <li>
               <NavLink to="/subjects" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
-                <Layers size={17} />
+                <Layers size={16} />
                 <span>Subjects</span>
               </NavLink>
             </li>
@@ -57,14 +64,8 @@ const Navbar = () => {
             {isAuthenticated ? (
               <>
                 <li>
-                  <NavLink to="/upload" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
-                    <Upload size={17} />
-                    <span>Upload</span>
-                  </NavLink>
-                </li>
-                <li>
                   <NavLink to="/my-notes" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
-                    <BookOpen size={17} />
+                    <BookOpen size={16} />
                     <span>My Notes</span>
                   </NavLink>
                 </li>
@@ -72,22 +73,36 @@ const Navbar = () => {
                 {isAdmin && (
                   <li>
                     <NavLink to="/admin/dashboard" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
-                      <ShieldAlert size={17} color="#c084fc" />
-                      <span style={{ color: '#c084fc', fontWeight: 600 }}>Admin</span>
+                      <ShieldCheck size={16} color="#7c3aed" />
+                      <span style={{ color: '#7c3aed', fontWeight: 600 }}>Admin</span>
                     </NavLink>
                   </li>
                 )}
 
                 <li>
-                  <NavLink to="/profile" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
-                    <User size={17} />
+                  <NavLink to="/upload" className="btn btn-primary btn-sm" style={{ padding: '0.45rem 0.95rem' }}>
+                    <PlusCircle size={15} />
+                    <span>Upload Note</span>
+                  </NavLink>
+                </li>
+
+                <li>
+                  <NavLink
+                    to="/profile"
+                    className="nav-user-pill"
+                    title={`Logged in as ${user?.name} (${user?.email})`}
+                    style={{ textDecoration: 'none' }}
+                  >
+                    <div className="user-avatar-initial">
+                      {getInitial(user?.name)}
+                    </div>
                     <span>{user?.name?.split(' ')[0] || 'Profile'}</span>
                   </NavLink>
                 </li>
 
                 <li>
                   <button onClick={handleLogout} className="btn btn-secondary btn-sm" title="Log out">
-                    <LogOut size={16} />
+                    <LogOut size={15} />
                     <span>Logout</span>
                   </button>
                 </li>
@@ -96,14 +111,14 @@ const Navbar = () => {
               <>
                 <li>
                   <Link to="/login" className="btn btn-secondary btn-sm">
-                    <LogIn size={16} />
-                    <span>Login</span>
+                    <LogIn size={15} />
+                    <span>Sign In</span>
                   </Link>
                 </li>
                 <li>
                   <Link to="/register" className="btn btn-primary btn-sm">
-                    <UserPlus size={16} />
-                    <span>Register</span>
+                    <UserPlus size={15} />
+                    <span>Get Started</span>
                   </Link>
                 </li>
               </>
